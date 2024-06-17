@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties resource="db.properties"/>
+
+    <settings>
+        <setting name="lazyLoadingEnabled" value="true"/>
+    </settings>
+
+    <typeAliases>
+        <package name="com.hnisc.po"/>
+    </typeAliases>
+
+    <!--1.配置环境 ，默认的环境id为mysql -->
+    <environments default="mysql">
+        <!--1.2.配置id为mysql的数据库环境 -->
+        <environment id="mysql">
+            <!-- 使用JDBC的事务管理 -->
+            <transactionManager type="JDBC" />
+            <!--数据库连接池 -->
+            <dataSource type="POOLED">
+                <!-- 数据库驱动 -->
+                <property name="driver" value="${mysql.driver}" />
+                <!-- 连接数据库的url -->
+                <property name="url" value="${mysql.url}" />
+                <!-- 连接数据库的用户名 -->
+                <property name="username" value="${mysql.username}" />
+                <!-- 连接数据库的密码 -->
+                <property name="password" value="${mysql.password}" />
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!--2.配置Mapper的位置 -->
+    <mappers>
+        <mapper resource="com/hnisc/mapper/UsersMapper.xml"/>
+        <mapper resource="com/hnisc/mapper/CoursesMapper.xml"/>
+        <mapper resource="com/hnisc/mapper/GradesMapper.xml"/>
+    </mappers>
+</configuration>

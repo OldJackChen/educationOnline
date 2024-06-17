@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnisc.mapper.UsersMapper">
+    <resultMap id="UsersAndCourseAndGrades" type="Users">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="email" column="email"/>
+        <collection property="gradesList" ofType="Grades">
+            <id property="id" column="grades_id"/>
+            <result property="grade" column="grade"/>
+            <result property="user_id" column="user_id"/>
+            <result property="course_id" column="course_id"/>
+        </collection>
+        <collection property="coursesList" ofType="Courses">
+            <id property="id" column="courses_id"/>
+            <result property="name" column="courses_name"/>
+            <result property="description" column="description"/>
+            <result property="instructor_id" column="instructor_id"/>
+        </collection>
+    </resultMap>
+
+<!--    获取所有用户信息(模糊)-->
+    <select id="findAllUser" resultType="Users">
+        select * from users
+    </select>
+
+<!--    获取所有用户的信息(精确)-->
+    <select id="findAllUsersWithGradesWithCourses" resultMap="UsersAndCourseAndGrades">
+        select u.*,c.id as courses_id,c.name as courses_name,c.description,g.id as grades_id,g.grade
+        from (users u inner join grades g on u.id=g.user_id)
+            inner join courses c on u.id=c.instructor_id
+    </select>
+
+<!--     根据用户编号获取用户信息-->
+    <select id="findUsersById" parameterType="int" resultType="Users">
+        select * from users where id=#{id}
+    </select>
+
+<!--    增加用户信息-->
+    <insert id="insertUser" parameterType="Users">
+        insert into users(username,password,email) values(#{username},#{password},#{email})
+    </insert>
+
+<!--    删除用户信息-->
+    <delete id="delUserById" parameterType="int">
+        delete
+        from users
+        where id=#{id}
+    </delete>
+
+<!--    修改用户信息-->
+    <update id="updateUserById" parameterType="Users">
+        update users
+        <set>
+            <if test="username !=null and username!=''">
+                username=#{username},
+            </if>
+            <if test="password !=null and password!=''" >
+                password=#{password},
+            </if>
+            <if test="email !=null and email!=''">
+                email=#{email},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+</mapper>

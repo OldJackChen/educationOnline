@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnisc.mapper.CoursesMapper">
+    <resultMap id="CoursesAndGradesAndUsers" type="Courses">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="instructor_id" column="instructor_id"/>
+        <collection property="gradesList" ofType="Grades">
+            <id property="id" column="grades_id"/>
+            <result property="grade" column="grade"/>
+            <result property="user_id" column="user_id"/>
+            <result property="course_id" column="course_id"/>
+        </collection>
+        <collection property="usersList" ofType="Users">
+            <id property="id" column="users_id"/>
+            <result property="username" column="username"/>
+            <result property="password" column="password"/>
+            <result property="email" column="email"/>
+        </collection>
+    </resultMap>
+<!--    查询所有课程-->
+    <select id="findAllCourses" resultType="Courses">
+        select * from courses
+    </select>
+    <!--获取所有课程的所有信息-->
+    <select id="findCoursesWithGradesWithUsers" resultMap="CoursesAndGradesAndUsers">
+        select c.*,g.id as grades_id,g.grade,u.id as users_id,u.username,u.password,u.email
+        from courses c,grades g,users u
+        where c.id=g.course_id and u.id=g.user_id
+    </select>
+
+    <!--    根据用户编号获取用户信息-->
+    <select id="findCoursesById" parameterType="int" resultType="Courses">
+        select * from courses where id=#{id}
+    </select>
+    <!--    增加课程信息-->
+    <insert id="insertCourse" parameterType="Courses">
+        insert into courses(id,name,description,instructor_id) values(#{id},#{name},#{description},#{instructor_id})
+    </insert>
+    <!--    删除课程信息-->
+    <delete id="delCourse" parameterType="int">
+        delete from courses where id=#{id}
+    </delete>
+    <!--    修改课程信息-->
+    <update id="updateCourseById" parameterType="Courses">
+        update courses
+        <set>
+            <if test="name !=null and name!=''" >
+                name=#{name},
+            </if>
+            <if test="description !=null and description!=''">
+                description=#{description},
+            </if>
+            <if test="instructor_id !=null and instructor_id!=''">
+                instructor_id=#{instructor_id},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+</mapper>

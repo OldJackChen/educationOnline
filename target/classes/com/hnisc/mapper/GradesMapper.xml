@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnisc.mapper.GradesMapper">
+<!--    根据姓名和邮箱查询成绩-->
+    <select id="findGradesByUserNameAndEmail" parameterType="Users" resultType="Grades">
+        select u.*,g.*
+        from(users u inner join grades g on u.id=g.user_id)
+            inner join courses c on u.id=c.instructor_id
+        <where>
+            <if test="username!=null and username!=''">
+                and username like concat('%',#{username},'%')
+            </if>
+            <if test="email !=null and email!=''">
+                and email=#{email}
+            </if>
+        </where>
+    </select>
+
+    <!--    增加成绩信息-->
+    <insert id="insertGrade" parameterType="Grades">
+        insert into grades(grade) values(#{grade})
+    </insert>
+
+    <!--    删除成绩信息-->
+    <delete id="delGrade" parameterType="int">
+        delete from grades where id=#{id}
+    </delete>
+
+    <!--    修改成绩信息-->
+    <update id="updateGrade" parameterType="Grades">
+        update grades
+        <set>
+            <if test="grades !=null and grades!=''">
+                grades=#{grades},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+</mapper>
